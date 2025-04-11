@@ -49,6 +49,11 @@ docker-stop:
 docker-restart:
 	$(DOCKER_COMPOSE) restart
 
+docker-full-restart:
+	$(DOCKER_COMPOSE) down
+	$(DOCKER_COMPOSE) build
+	$(DOCKER_COMPOSE) up -d
+
 docker-logs:
 	$(DOCKER_COMPOSE) logs -f
 

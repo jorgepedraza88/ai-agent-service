@@ -6,6 +6,10 @@ export const authMiddleware = {
   apiKeyAuth(req: Request, res: Response, next: NextFunction): void {
     const apiKey = req.header(config.auth.apiKeyHeader);
 
+    console.log('Cabeceras recibidas:', req.headers);
+    console.log('API Key de configuración:', config.auth.apiKey);
+    console.log('API Key recibida:', apiKey);
+
     if (!apiKey || apiKey !== config.auth.apiKey) {
       logger.warn('Unauthorized API access attempt');
       res.status(401).json({ error: 'Unauthorized' });
