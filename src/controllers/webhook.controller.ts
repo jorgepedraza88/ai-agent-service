@@ -1,9 +1,6 @@
-// src/controllers/webhook.controller.ts
 import { Request, Response } from 'express';
-import { AgentService } from '../services/agent.service';
+
 import { logger } from '../utils/logger';
-import { config } from '../config/config';
-import { agentController } from './agent.controller';
 
 // Importación de la configuración del agente y creación del servicio
 // Necesitamos acceder al mismo servicio que usa el agentController

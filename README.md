@@ -61,7 +61,7 @@ npm start
 ### Con Docker Compose
 
 ```bash
-docker-compose up -d
+make docker-start
 ```
 
 ## Uso del servicio
