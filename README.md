@@ -4,7 +4,7 @@ Microservicio para desplegar agentes de IA con integraciones para WhatsApp, Tele
 
 ## Requisitos
 
-- Node.js 18 o superior
+- Node.js 22 o superior
 - Docker y Docker Compose (para despliegue con Qdrant)
 - API Key de OpenAI (opcional si usas Ollama)
 - Ollama instalado localmente (opcional)
