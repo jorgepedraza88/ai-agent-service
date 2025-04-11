@@ -47,6 +47,12 @@ npm run build
 
 ### Modo desarrollo
 
+Iniciar base de datos Vectorial
+
+```
+docker run -p 6333:6333 -v qdrant-data:/qdrant/storage qdrant/qdrant
+```` 
+
 ```bash
 npm run dev
 ```
