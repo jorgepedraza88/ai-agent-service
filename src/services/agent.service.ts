@@ -1,6 +1,4 @@
-// src/services/agent.service.ts
 import { openaiClient } from '../config/openai';
-import { config } from '../config/config';
 import { AgentConfig, Tool, Message } from '../models/agent.model';
 import { vectorService } from './vector.service';
 import { logger } from '../utils/logger';

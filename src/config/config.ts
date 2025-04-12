@@ -17,11 +17,13 @@ export const config = {
     apiKey: process.env.QDRANT_API_KEY,
     collectionName: process.env.QDRANT_COLLECTION || 'customer_data',
   },
+  whatsapp: {
+    accessToken: process.env.WHATSAPP_ACCESS_TOKEN,
+    phoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID,
+    apiVersion: process.env.WHATSAPP_API_VERSION || 'v18.0',
+    verifyToken: process.env.WHATSAPP_VERIFY_TOKEN,
+  },
   integrations: {
-    whatsapp: {
-      apiKey: process.env.WHATSAPP_API_KEY,
-      phoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID,
-    },
     telegram: {
       token: process.env.TELEGRAM_BOT_TOKEN,
     },

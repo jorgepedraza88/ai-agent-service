@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-
 import { logger } from '../utils/logger';
+import { whatsAppIntegration } from '../integrations/whatsapp';
 
 // Importación de la configuración del agente y creación del servicio
 // Necesitamos acceder al mismo servicio que usa el agentController
@@ -47,41 +47,42 @@ const agentService = new AgentService(agentConfig);
 export const webhookController = {
   async handleWhatsAppWebhook(req: Request, res: Response): Promise<void> {
     try {
-      // Lógica específica para webhooks de WhatsApp
-      const { entry } = req.body;
+      // Responder inmediatamente al webhook para evitar timeouts
+      res.status(200).json({ status: 'ok' });
 
-      if (!entry || !entry.length) {
-        res.status(400).json({ error: 'Formato de webhook inválido' });
+      // Procesar el mensaje después de responder
+      const processedMessage = whatsAppIntegration.processIncomingMessage(req.body);
+
+      if (!processedMessage) {
+        logger.warn('Webhook recibido pero no se identificó ningún mensaje válido');
         return;
       }
 
-      // Procesar mensajes de WhatsApp
-      for (const entryItem of entry) {
-        if (entryItem.changes && entryItem.changes.length) {
-          for (const change of entryItem.changes) {
-            if (change.value && change.value.messages && change.value.messages.length) {
-              for (const message of change.value.messages) {
-                if (message.type === 'text') {
-                  const userId = message.from;
-                  const text = message.text.body;
+      logger.info(`Mensaje recibido de WhatsApp: ${JSON.stringify(processedMessage)}`);
 
-                  // Procesar el mensaje con el agente
-                  const response = await agentService.processMessage(userId, text);
+      if (processedMessage.type === 'text') {
+        const userId = `whatsapp-${processedMessage.from}`;
+        const text = processedMessage.content;
 
-                  // Aquí se enviaría la respuesta de vuelta a WhatsApp
-                  // (Requiere implementación de WhatsApp API)
-                  logger.info(`Respuesta para WhatsApp (${userId}): ${response}`);
-                }
-              }
-            }
-          }
-        }
+        // Procesar el mensaje con el agente
+        const response = await agentService.processMessage(userId, text);
+
+        // Enviar la respuesta de vuelta a WhatsApp
+        await whatsAppIntegration.sendTextMessage(processedMessage.from, response);
+
+        logger.info(`Respuesta enviada a WhatsApp (${processedMessage.from}): ${response}`);
+      } else {
+        // Manejar otros tipos de mensajes (imágenes, documentos, etc.)
+        logger.info(`Mensaje de tipo ${processedMessage.type} recibido pero no procesado`);
+
+        // Respuesta genérica para tipos de mensajes no soportados
+        await whatsAppIntegration.sendTextMessage(
+          processedMessage.from,
+          `He recibido tu ${processedMessage.type}. Actualmente solo puedo procesar mensajes de texto.`,
+        );
       }
-
-      res.status(200).json({ status: 'ok' });
     } catch (error) {
-      logger.error('Error in WhatsApp webhook:', error);
-      res.status(500).json({ error: 'Error al procesar webhook de WhatsApp' });
+      logger.error(`Error in WhatsApp webhook: ${error}`);
     }
   },
 
